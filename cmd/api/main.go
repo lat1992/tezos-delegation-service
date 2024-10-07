@@ -3,9 +3,10 @@ package main
 import (
 	"log/slog"
 
+	"github.com/lat1992/tezos-delegation-service/database"
+	"github.com/lat1992/tezos-delegation-service/external"
 	"github.com/lat1992/tezos-delegation-service/handlers"
 	"github.com/lat1992/tezos-delegation-service/services"
-	"github.com/lat1992/tezos-delegation-service/storages"
 	"github.com/spf13/viper"
 )
 
@@ -13,21 +14,23 @@ func main() {
 	slog.Info("starting service")
 
 	viper.SetDefault("port", "8080")
-	viper.SetDefault("storage_host", "localhost")
-	viper.SetDefault("storage_port", "5432")
-	viper.SetDefault("storage_database", "app")
-	viper.SetDefault("storage_user", "postgres")
-	viper.SetDefault("storage_password", "postgres")
+	viper.SetDefault("database_host", "localhost")
+	viper.SetDefault("database_port", "5432")
+	viper.SetDefault("database_database", "app")
+	viper.SetDefault("database_user", "postgres")
+	viper.SetDefault("tezos_api", "https://api.tzkt.io/v1")
 	viper.AutomaticEnv()
 
-	db, err := storages.NewStorage(viper.GetString("storage_host"), viper.GetString("storage_port"), viper.GetString("storage_database"), viper.GetString("storage_user"), viper.GetString("storage_password"))
+	db, err := database.NewStorage(viper.GetString("database_host"), viper.GetString("database_port"), viper.GetString("database_database"), viper.GetString("database_user"), viper.GetString("database_password"))
 	if err != nil {
 		slog.Error("error when create new storage", "error", err)
 		return
 	}
 	defer db.Close()
 
-	tds := services.NewTezosDelegation()
+	tc := external.NewTezosClient(viper.GetString("tezos_api"))
+
+	tds := services.NewTezosDelegation(tc)
 
 	router := handlers.GetRouter(tds)
 

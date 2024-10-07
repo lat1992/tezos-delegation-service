@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lat1992/tezos-delegation-service/interfaces"
+	"github.com/lat1992/tezos-delegation-service/services"
 )
 
-func GetRouter(tds interfaces.TezosDelegationService) *gin.Engine {
+func GetRouter(tds services.TezosDelegationService) *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/", health)

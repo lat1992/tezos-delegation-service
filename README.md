@@ -54,7 +54,7 @@ make
 
 - `GET /`: Health check
 - `GET /health`: Health check
-- `POST /xtz/delegations/[:year]`: Fetch delegations with or without a specific year
+- `GET /xtz/delegations/[:year]`: Fetch delegations with or without a specific year
 
 ## Configuration
 

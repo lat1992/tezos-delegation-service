@@ -7,11 +7,13 @@ type Data struct {
 	Level     string `json:"level"`
 }
 
+type Sender struct {
+	Address string `json:"address"`
+}
+
 type Delegation struct {
 	Timestamp string `json:"timestamp"`
-	Sender    struct {
-		Address string `json:"address"`
-	} `json:"sender"`
-	Level  int `json:"level"`
-	Amount int `json:"amount"`
+	Sender    Sender `json:"sender"`
+	Level     int    `json:"level"`
+	Amount    int    `json:"amount"`
 }

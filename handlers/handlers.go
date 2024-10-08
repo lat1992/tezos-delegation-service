@@ -12,7 +12,8 @@ func GetRouter(tds services.TezosDelegationService) *gin.Engine {
 	router.GET("/health", health)
 
 	xtz := router.Group("/xtz")
-	xtz.POST("/delegations/:year", delegations(tds))
+	xtz.GET("/delegations", delegations(tds))
+	xtz.GET("/delegations/:year", delegationsByYear(tds))
 
 	return router
 }

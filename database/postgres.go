@@ -8,7 +8,7 @@ import (
 )
 
 type Store struct {
-	postgres *pgxpool.Pool
+	postgres postgresInterface
 }
 
 func NewStore(host, port, database, user, password string) (*Store, error) {

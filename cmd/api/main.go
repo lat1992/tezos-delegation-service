@@ -21,7 +21,7 @@ func main() {
 	viper.SetDefault("tezos_api", "https://api.tzkt.io/v1")
 	viper.AutomaticEnv()
 
-	db, err := database.NewStorage(viper.GetString("database_host"), viper.GetString("database_port"), viper.GetString("database_database"), viper.GetString("database_user"), viper.GetString("database_password"))
+	db, err := database.NewStore(viper.GetString("database_host"), viper.GetString("database_port"), viper.GetString("database_database"), viper.GetString("database_user"), viper.GetString("database_password"))
 	if err != nil {
 		slog.Error("error when create new storage", "error", err)
 		return
@@ -30,7 +30,18 @@ func main() {
 
 	tc := external.NewTezosClient(viper.GetString("tezos_api"))
 
-	tds := services.NewTezosDelegation(tc)
+	slog.Info("initializing...")
+	tds := services.NewTezosDelegation(db, tc)
+	if err := tds.Index(true); err != nil {
+		slog.Error("error when initializing", "error", err)
+	}
+	slog.Info("initialize end")
+
+	go func() {
+		if err = tds.Start(); err != nil {
+			slog.Error("error in tezos delegation service", "error", err)
+		}
+	}()
 
 	router := handlers.GetRouter(tds)
 
